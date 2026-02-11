@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Valentine 😈💘</title>
+<title>Valentinstag 💘</title>
 
 <style>
 body{
@@ -24,7 +24,7 @@ body{
   text-align:center;
   box-shadow:0 15px 40px rgba(0,0,0,.1);
   position:relative;
-  z-index:1000; /* bleibt über Meme */
+  z-index:1000;
 }
 
 h1{margin:0 0 8px;font-size:32px;}
@@ -58,9 +58,8 @@ button{
   position:fixed;
   animation: floatUp 3s linear forwards;
   pointer-events:none;
-  z-index:500;
+  z-index:600;
 }
-
 @keyframes floatUp{
   0%{transform:translateY(0) scale(1);opacity:1;}
   100%{transform:translateY(-100vh) scale(1.6);opacity:0;}
@@ -73,9 +72,8 @@ button{
   height:8px;
   animation: fall 3s linear forwards;
   pointer-events:none;
-  z-index:400;
+  z-index:500;
 }
-
 @keyframes fall{
   0%{transform:translateY(-10px) rotate(0);}
   100%{transform:translateY(100vh) rotate(720deg);}
@@ -85,11 +83,11 @@ button{
 
 <body>
 <div class="card">
-  <h1>Eine wichtige Frage 😈</h1>
+  <h1>Eine wichtige Frage 💘</h1>
   <div class="meta">Samstag • 15:00 Uhr</div>
   <p><b>Willst du mein Valentinstags-Date sein?</b></p>
 
-  <div class="stage">
+  <div class="stage" id="stage">
     <button id="yes">Ja 😍</button>
     <button id="no">Nein 🙃</button>
   </div>
@@ -101,31 +99,45 @@ button{
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const result = document.getElementById("result");
+const stage = document.getElementById("stage");
 
 const memeUrl = "https://i.imgur.com/AexB9oC.jpeg";
 
 let noClicks = 0;
-let yesScale = 1;
-let memeScale = 0.4;
+let memeShown = false;
 
-// Meme (hinter Card)
+// Meme
 const meme = document.createElement("img");
 meme.src = memeUrl;
 meme.style.position = "fixed";
 meme.style.bottom = "0";
 meme.style.left = "50%";
-meme.style.transform = "translateX(-50%) scale(0.4)";
-meme.style.transition = "0.3s ease";
-meme.style.zIndex = "200"; // hinter Card
-meme.style.display = "none";
+meme.style.transform = "translateX(-50%) scale(0)";
+meme.style.transition = "transform 0.25s ease";
+meme.style.zIndex = "200";
 meme.style.pointerEvents = "none";
 meme.style.maxHeight = "70vh";
 document.body.appendChild(meme);
 
+// Nein Texte
 const noTexts = [
   "Überleg nochmal 😌",
-  "Ich bring auch Snacks 😏"
+  "Ich bring auch Snacks 😏",
+  "Bist du dir wirklich sicher?"
 ];
+
+// Button verschieben
+function moveNo(){
+  const s = stage.getBoundingClientRect();
+  const b = noBtn.getBoundingClientRect();
+  const pad = 10;
+
+  const x = Math.random() * (s.width - b.width - pad);
+  const y = Math.random() * (s.height - b.height - pad);
+
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+}
 
 noBtn.addEventListener("click", () => {
 
@@ -133,39 +145,34 @@ noBtn.addEventListener("click", () => {
 
   if(noClicks === 1) noBtn.textContent = noTexts[0];
   if(noClicks === 2) noBtn.textContent = noTexts[1];
+  if(noClicks === 3) noBtn.textContent = noTexts[2];
 
-  if(noClicks === 3){
-    meme.style.display = "block";
-    memeScale = 0.6;
-    meme.style.transform = `translateX(-50%) scale(${memeScale})`;
+  moveNo();
+
+  if(noClicks === 4 && !memeShown){
+    memeShown = true;
+    meme.style.transform = "translateX(-50%) scale(1.2)";
+    setTimeout(()=>{
+      meme.style.transform = "translateX(-50%) scale(0.6)";
+    },200);
   }
-
-  if(noClicks > 3){
-    memeScale += 0.4;
-    meme.style.transform = `translateX(-50%) scale(${memeScale})`;
-  }
-
-  yesScale += 0.2;
-  yesBtn.style.transform = `scale(${yesScale})`;
 });
 
 yesBtn.addEventListener("click", () => {
 
   result.style.display="block";
-  result.innerHTML="YESSSS 🥳🔥<br><span style='font-size:30px'>Samstag 15:00 Uhr. Du. Ich. Punkt.</span> 💘";
+  result.innerHTML="YESSSS 🥳<br><span style='font-size:28px;font-weight:900'>Samstag 15 Uhr. Eichendorffring.</span>";
 
   noBtn.style.display="none";
   yesBtn.style.left="50%";
   yesBtn.style.transform="translateX(-50%) scale(1.6)";
   yesBtn.textContent="💘";
 
-  meme.style.display="none";
-
   launchHearts();
   launchConfetti();
 });
 
-/* MEHR PARTY */
+// Party
 function launchHearts(){
   for(let i=0;i<60;i++){
     const heart=document.createElement("div");
@@ -180,8 +187,8 @@ function launchHearts(){
 }
 
 function launchConfetti(){
-  const colors=["#ff3b7a","#ffd700","#00c2ff","#7dff7d","#ff8c00","#ff00ff"];
-  for(let i=0;i<200;i++){
+  const colors=["#ff3b7a","#ffd700","#00c2ff","#7dff7d","#ff8c00"];
+  for(let i=0;i<150;i++){
     const conf=document.createElement("div");
     conf.className="confetti";
     conf.style.left=(Math.random()*100)+"vw";
