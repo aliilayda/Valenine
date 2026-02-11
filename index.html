@@ -1,0 +1,71 @@
+<script>
+const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
+const result = document.getElementById("result");
+
+const memeUrl = "https://i.imgur.com/AexB9oC.jpeg";
+
+let noClicks = 0;
+let yesScale = 1;
+let memeScale = 0.4;
+
+const meme = document.createElement("img");
+meme.src = memeUrl;
+meme.style.position = "fixed";
+meme.style.bottom = "0";
+meme.style.left = "50%";
+meme.style.transform = "translateX(-50%) scale(0.4)";
+meme.style.transition = "0.3s ease";
+meme.style.zIndex = "999";
+meme.style.display = "none";
+meme.style.pointerEvents = "none";
+document.body.appendChild(meme);
+
+const noTexts = [
+  "Ilayda überleg nochmal 😌",
+  "Ich bring auch Snacks 😏"
+];
+
+noBtn.addEventListener("click", () => {
+
+  noClicks++;
+
+  if(noClicks === 1){
+    noBtn.textContent = noTexts[0];
+  }
+
+  if(noClicks === 2){
+    noBtn.textContent = noTexts[1];
+  }
+
+  if(noClicks === 3){
+    meme.style.display = "block";
+    memeScale = 0.6;
+    meme.style.transform = `translateX(-50%) scale(${memeScale})`;
+  }
+
+  if(noClicks > 3){
+    memeScale += 0.5;
+    meme.style.transform = `translateX(-50%) scale(${memeScale})`;
+  }
+
+  yesScale += 0.2;
+  yesBtn.style.transform = `scale(${yesScale})`;
+});
+
+yesBtn.addEventListener("click", () => {
+
+  result.style.display="block";
+  result.innerHTML="YESSSS 🥳<br>Samstag 15:00 Uhr gehört Ilayda offiziell mir 💞";
+
+  noBtn.style.display="none";
+  yesBtn.textContent="💘";
+  yesBtn.style.left="50%";
+  yesBtn.style.transform="translateX(-50%) scale(1.5)";
+
+  meme.style.display="none";
+
+  launchHearts();
+  launchConfetti();
+});
+</script>
