@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ilayda 💘</title>
+<title>Valentine 😈💘</title>
 
 <style>
 body{
@@ -15,19 +15,22 @@ body{
   background: radial-gradient(circle at 20% 20%, #ffd6e7, #fff);
   overflow:hidden;
 }
+
 .card{
   width:min(560px, calc(100vw - 24px));
-  background: rgba(255,255,255,.85);
+  background: rgba(255,255,255,.9);
   padding:26px;
   border-radius:20px;
   text-align:center;
   box-shadow:0 15px 40px rgba(0,0,0,.1);
   position:relative;
-  z-index:2;
+  z-index:1000; /* bleibt über Meme */
 }
+
 h1{margin:0 0 8px;font-size:32px;}
 .meta{margin:8px 0 14px;font-weight:800;color:#ff3b7a;}
 .stage{position:relative;height:170px;}
+
 button{
   border:0;
   padding:12px 20px;
@@ -37,31 +40,42 @@ button{
   position:absolute;
   top:80px;
   transition:.15s;
-  user-select:none;
 }
+
 #yes{background:#ff3b7a;color:#fff;left:30%;}
 #no{background:#111;color:#fff;left:58%;}
-.result{display:none;margin-top:15px;font-weight:800;line-height:1.4;}
 
+.result{
+  display:none;
+  margin-top:20px;
+  font-weight:900;
+  font-size:22px;
+  line-height:1.4;
+}
+
+/* Herzen */
 .heart{
   position:fixed;
   animation: floatUp 3s linear forwards;
-  z-index: 998;
   pointer-events:none;
+  z-index:500;
 }
+
 @keyframes floatUp{
   0%{transform:translateY(0) scale(1);opacity:1;}
   100%{transform:translateY(-100vh) scale(1.6);opacity:0;}
 }
 
+/* Konfetti */
 .confetti{
   position:fixed;
   width:8px;
   height:8px;
   animation: fall 3s linear forwards;
-  z-index: 997;
   pointer-events:none;
+  z-index:400;
 }
+
 @keyframes fall{
   0%{transform:translateY(-10px) rotate(0);}
   100%{transform:translateY(100vh) rotate(720deg);}
@@ -71,9 +85,8 @@ button{
 
 <body>
 <div class="card">
-  <h1>Ilayda 💘</h1>
-  <p>Ich habe da eine sehr wichtige Frage…</p>
-  <div class="meta">Samstag • 15:00 Uhr • Date 😏</div>
+  <h1>Eine wichtige Frage 😈</h1>
+  <div class="meta">Samstag • 15:00 Uhr</div>
   <p><b>Willst du mein Valentinstags-Date sein?</b></p>
 
   <div class="stage">
@@ -95,6 +108,7 @@ let noClicks = 0;
 let yesScale = 1;
 let memeScale = 0.4;
 
+// Meme (hinter Card)
 const meme = document.createElement("img");
 meme.src = memeUrl;
 meme.style.position = "fixed";
@@ -102,17 +116,19 @@ meme.style.bottom = "0";
 meme.style.left = "50%";
 meme.style.transform = "translateX(-50%) scale(0.4)";
 meme.style.transition = "0.3s ease";
-meme.style.zIndex = "999";
+meme.style.zIndex = "200"; // hinter Card
 meme.style.display = "none";
 meme.style.pointerEvents = "none";
+meme.style.maxHeight = "70vh";
 document.body.appendChild(meme);
 
 const noTexts = [
-  "Ilayda überleg nochmal 😌",
+  "Überleg nochmal 😌",
   "Ich bring auch Snacks 😏"
 ];
 
 noBtn.addEventListener("click", () => {
+
   noClicks++;
 
   if(noClicks === 1) noBtn.textContent = noTexts[0];
@@ -125,7 +141,7 @@ noBtn.addEventListener("click", () => {
   }
 
   if(noClicks > 3){
-    memeScale += 0.5;
+    memeScale += 0.4;
     meme.style.transform = `translateX(-50%) scale(${memeScale})`;
   }
 
@@ -134,13 +150,14 @@ noBtn.addEventListener("click", () => {
 });
 
 yesBtn.addEventListener("click", () => {
+
   result.style.display="block";
-  result.innerHTML="YESSSS 🥳<br>Samstag 15:00 Uhr gehört Ilayda offiziell mir 💞<br>Zieh was Süßes an 😏";
+  result.innerHTML="YESSSS 🥳🔥<br><span style='font-size:30px'>Samstag 15:00 Uhr. Du. Ich. Punkt.</span> 💘";
 
   noBtn.style.display="none";
-  yesBtn.textContent="💘";
   yesBtn.style.left="50%";
-  yesBtn.style.transform="translateX(-50%) scale(1.5)";
+  yesBtn.style.transform="translateX(-50%) scale(1.6)";
+  yesBtn.textContent="💘";
 
   meme.style.display="none";
 
@@ -148,29 +165,30 @@ yesBtn.addEventListener("click", () => {
   launchConfetti();
 });
 
+/* MEHR PARTY */
 function launchHearts(){
-  for(let i=0;i<20;i++){
+  for(let i=0;i<60;i++){
     const heart=document.createElement("div");
     heart.className="heart";
-    heart.textContent = "💖";
-    heart.style.left = (Math.random()*100) + "vw";
-    heart.style.bottom = "0px";
-    heart.style.fontSize = (18 + Math.random()*26) + "px";
+    heart.textContent="💖";
+    heart.style.left=(Math.random()*100)+"vw";
+    heart.style.bottom="0px";
+    heart.style.fontSize=(20+Math.random()*40)+"px";
     document.body.appendChild(heart);
-    setTimeout(()=>heart.remove(), 3000);
+    setTimeout(()=>heart.remove(),3000);
   }
 }
 
 function launchConfetti(){
-  const colors=["#ff3b7a","#ffd700","#00c2ff","#7dff7d","#ff8c00"];
-  for(let i=0;i<70;i++){
+  const colors=["#ff3b7a","#ffd700","#00c2ff","#7dff7d","#ff8c00","#ff00ff"];
+  for(let i=0;i<200;i++){
     const conf=document.createElement("div");
     conf.className="confetti";
-    conf.style.left = (Math.random()*100) + "vw";
-    conf.style.background = colors[Math.floor(Math.random()*colors.length)];
-    conf.style.animationDuration = (2 + Math.random()*2) + "s";
+    conf.style.left=(Math.random()*100)+"vw";
+    conf.style.background=colors[Math.floor(Math.random()*colors.length)];
+    conf.style.animationDuration=(2+Math.random()*2)+"s";
     document.body.appendChild(conf);
-    setTimeout(()=>conf.remove(), 4000);
+    setTimeout(()=>conf.remove(),4000);
   }
 }
 </script>
