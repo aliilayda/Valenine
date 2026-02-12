@@ -150,7 +150,7 @@
 
   <div id="buttonsArea">
     <button id="yes">Ja 😍</button>
-    <button id="nein">Nein 🙂</button>
+    <button id="nein">Nein 😓</button>
   </div>
 
   <div id="result"></div>
@@ -177,9 +177,9 @@
   const padX = 10;
 
   const texts = [
-    "Überleg nochmal",
-    "Ich bring auch Snacks",
-    "Letzte Chance"
+    "Überleg nochmal🤔",
+    "Ich bring auch Snacks😉",
+    "Letzte Chance😕"
   ];
 
   function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
@@ -250,7 +250,7 @@
     // groß in die Button-Zone (nicht auf die Frage)
     const a = buttonsArea.getBoundingClientRect();
 
-    nein.textContent = "Ja 💘";
+    nein.textContent = "Ja 🖕🏼";
     nein.style.background = "#ff2f75";
     nein.style.color = "#fff";
 
