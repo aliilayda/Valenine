@@ -47,7 +47,7 @@
     display:flex;
     justify-content:center;
     align-items:center;
-    gap:18px;
+    gap:60px; /* ✅ EINZIGE ÄNDERUNG: größerer Abstand */
     position:relative; /* wichtig für den großen Button später */
   }
 
@@ -239,7 +239,6 @@
     yes.style.display = "none";
 
     // NEIN aus dem fixed-layer zurück IN die ButtonsArea holen
-    // (damit er nicht über der Überschrift liegt)
     neinFloating = false;
     nein.style.transition = "transform 0.2s ease, background 0.2s ease";
     nein.style.position = "absolute";
