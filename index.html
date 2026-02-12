@@ -1,198 +1,212 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Ilayda ❤️</title>
 
 <style>
-body{
-  margin:0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg,#f8cdda,#e1d5ff);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-}
-
-.card{
-  background:white;
-  padding:40px;
-  border-radius:25px;
-  text-align:center;
-  width:90%;
-  max-width:420px;
-  box-shadow:0 10px 40px rgba(0,0,0,0.1);
-  position:relative;
-}
-
-h1{
-  margin-bottom:20px;
-}
-
-.question{
-  font-size:22px;
-  font-weight:bold;
-  margin-bottom:40px;
-}
-
-.buttons{
-  display:flex;
-  justify-content:center;
-  gap:20px;
-  position:relative;
-  height:70px;
-}
-
-button{
-  border:none;
-  padding:16px 32px;
-  font-size:18px;
-  border-radius:40px;
-  cursor:pointer;
-  transition:all 0.4s ease;
-}
-
-#yes{
-  background:#ff2f74;
-  color:white;
-}
-
-#no{
-  background:black;
-  color:white;
-  position:relative;
-}
-
-#result{
-  margin-top:40px;
-  font-size:28px;
-  font-weight:bold;
-  display:none;
-}
-
-.meme{
-  position:fixed;
-  bottom:0;
-  left:50%;
-  transform:translateX(-50%);
-  width:250px;
-  display:none;
-  z-index:999;
-}
-
-.confetti{
-  position:fixed;
-  width:10px;
-  height:10px;
-  background:red;
-  top:-10px;
-  animation:fall 3s linear infinite;
-}
-
-@keyframes fall{
-  to{
-    transform:translateY(110vh) rotate(720deg);
+  body{
+    margin:0;
+    font-family: Arial, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background: linear-gradient(135deg,#f8cdda,#e1d5ff);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    overflow:hidden;
   }
-}
 
-.growBig{
-  position:fixed !important;
-  left:50% !important;
-  top:60% !important;
-  transform:translate(-50%,-50%) scale(3);
-  z-index:1000;
-}
+  .card{
+    background:white;
+    padding:44px 32px;
+    border-radius:26px;
+    text-align:center;
+    width:90%;
+    max-width:420px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.10);
+    position:relative;
+    z-index:5;
+  }
 
+  h1{
+    margin:0 0 18px;
+    font-size:34px;
+  }
+
+  #question{
+    font-size:24px;
+    font-weight:800;
+    line-height:1.35;
+    margin:0 0 30px;
+  }
+
+  /* Bereich, in dem NO rumhüpft */
+  #buttonsArea{
+    position:relative;
+    height:150px;
+  }
+
+  button{
+    border:none;
+    padding:16px 34px;
+    font-size:18px;
+    border-radius:40px;
+    cursor:pointer;
+    transition: transform .2s ease, background .2s ease;
+    position:absolute;
+    top:52px;
+    user-select:none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #yes{
+    background:#ff2f74;
+    color:white;
+    left:18%;
+    z-index:3;
+  }
+
+  #no{
+    background:#111;
+    color:white;
+    left:55%;
+    z-index:2;
+  }
+
+  /* Meme */
+  #memePic{
+    position:fixed;
+    bottom:0;
+    left:50%;
+    transform:translateX(-50%) scale(0);
+    opacity:0;
+    transition: transform .35s ease, opacity .35s ease;
+    z-index:999;
+    pointer-events:none;
+    max-height:70vh;
+  }
+
+  /* Ergebnis */
+  #result{
+    display:none;
+    margin-top:24px;
+    font-weight:900;
+    line-height:1.15;
+  }
+  #result.show{
+    display:block;
+    animation: popIn .28s ease both;
+  }
+  @keyframes popIn{
+    from{ transform: translateY(8px) scale(.98); opacity:0; }
+    to{ transform: translateY(0) scale(1); opacity:1; }
+  }
+  .yess{ font-size:26px; margin-bottom:10px; }
+  .place{ font-size:30px; }
+
+  /* Konfetti (wie du's magst) */
+  .confetti{
+    position:fixed;
+    width:10px;
+    height:10px;
+    top:-10px;
+    animation: fall 3s linear infinite;
+    pointer-events:none;
+    z-index:1;
+  }
+  @keyframes fall{
+    to{ transform: translateY(110vh) rotate(720deg); }
+  }
+
+  /* Effekt: NO -> riesiges JA */
+  .becomeHuge{
+    position:fixed !important;
+    left:50% !important;
+    top:62% !important;
+    background:#ff2f74 !important;
+    color:#fff !important;
+    z-index:1000 !important;
+    animation: hugePop .45s ease both;
+  }
+  @keyframes hugePop{
+    0%   { transform: translate(-50%,-50%) scale(1); }
+    60%  { transform: translate(-50%,-50%) scale(3.4); }
+    100% { transform: translate(-50%,-50%) scale(3.0); }
+  }
 </style>
 </head>
+
 <body>
 
+<img id="memePic" src="https://i.imgur.com/AexB9oC.jpeg" alt="meme">
+
 <div class="card">
-  <h1>Ilayda ❤️</h1>
+  <h1 id="title">Ilayda ❤️</h1>
+  <div id="question">Willst du mein Valentinstags-Date sein? ❤️</div>
 
-  <div class="question">
-    Willst du mein Valentinstags-Date sein? ❤️
-  </div>
-
-  <div class="buttons">
+  <div id="buttonsArea">
     <button id="yes">Ja 😍</button>
-    <button id="no">Nein 🙂</button>
+    <button id="no">Nein 🙃</button>
   </div>
 
   <div id="result"></div>
 </div>
 
-<img src="https://i.imgur.com/AexB9oC.jpeg" class="meme" id="meme">
-
 <script>
-
-const yes = document.getElementById("yes");
-const no = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
+const noBtn = document.getElementById("no");
+const buttonsArea = document.getElementById("buttonsArea");
+const title = document.getElementById("title");
+const question = document.getElementById("question");
 const result = document.getElementById("result");
-const meme = document.getElementById("meme");
+const meme = document.getElementById("memePic");
 
 let noClicks = 0;
+let yesScale = 1;
+let memeShown = false;
+let noTurnedHuge = false;
 
 const noTexts = [
-  "Überleg nochmal 🙂",
-  "Ich bring auch Snacks",
-  "Letzte Chance",
-  "Bist du sicher?"
+  "Überleg nochmal 😌",
+  "Ich bring auch Snacks 😏",
+  "Bist du dir wirklich sicher?"
 ];
 
-no.addEventListener("click", () => {
+function moveNoStrong(){
+  const area = buttonsArea.getBoundingClientRect();
+  const b = noBtn.getBoundingClientRect();
+  const pad = 10;
 
-  noClicks++;
+  const maxX = Math.max(0, area.width - b.width - pad);
+  const maxY = Math.max(0, area.height - b.height - pad);
 
-  // Text ändern
-  if(noClicks <= 4){
-    no.textContent = noTexts[noClicks-1];
-  }
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
 
-  // Stark verschieben
-  no.style.position = "absolute";
-  no.style.top = Math.random()*200 + "px";
-  no.style.left = Math.random()*200 + "px";
+  noBtn.style.position = "absolute";
+  noBtn.style.left = x + "px";
+  noBtn.style.top  = y + "px";
 
-  // 4. Klick → Meme für 2 Sekunden
-  if(noClicks === 4){
-    meme.style.display = "block";
-    setTimeout(()=>{
-      meme.style.display = "none";
-    },2000);
-  }
-
-  // 5. Klick → verwandelt sich in riesiges JA
-  if(noClicks === 5){
-    no.textContent = "JA 😍";
-    no.style.background = "#ff2f74";
-    no.classList.add("growBig");
-  }
-
-});
-
-// Beide JA Buttons funktionieren
-function showFinal(){
-  document.querySelector(".buttons").style.display = "none";
-  result.style.display = "block";
-  result.innerHTML = "YESSSS 🥳<br><br>Samstag 15 Uhr · Eichendorffring";
-
-  launchConfetti();
+  // kleiner Sprung
+  noBtn.style.transform = "scale(1.08)";
+  setTimeout(()=> noBtn.style.transform = "scale(1)", 90);
 }
 
-yes.addEventListener("click", showFinal);
-no.addEventListener("click", function(){
-  if(noClicks >= 5){
-    showFinal();
-  }
-});
+function showMemeFor2s(){
+  meme.style.opacity = "1";
+  meme.style.transform = "translateX(-50%) scale(0.65)";
+  setTimeout(()=>{
+    meme.style.opacity = "0";
+    meme.style.transform = "translateX(-50%) scale(0)";
+  }, 2000);
+}
 
 function launchConfetti(){
+  // Konfetti wie bisher (infinite) — wir erstellen ein paar Teile
   for(let i=0;i<80;i++){
     const conf = document.createElement("div");
-    conf.classList.add("confetti");
+    conf.className = "confetti";
     conf.style.left = Math.random()*100 + "vw";
     conf.style.background = `hsl(${Math.random()*360},100%,50%)`;
     conf.style.animationDuration = (Math.random()*2+2)+"s";
@@ -200,6 +214,56 @@ function launchConfetti(){
   }
 }
 
+function showFinal(){
+  title.style.display = "none";
+  question.style.display = "none";
+  buttonsArea.style.display = "none";
+
+  result.classList.add("show");
+  result.innerHTML = `
+    <div class="yess">YESSSS 🥳</div>
+    <div class="place">Samstag 15 Uhr · Eichendorffring</div>
+  `;
+
+  launchConfetti();
+}
+
+yesBtn.addEventListener("click", showFinal);
+
+// NO Logik
+noBtn.addEventListener("click", () => {
+  if (noTurnedHuge) return;
+
+  noClicks++;
+
+  // Texte 1-3
+  if(noClicks === 1) noBtn.textContent = noTexts[0];
+  if(noClicks === 2) noBtn.textContent = noTexts[1];
+  if(noClicks === 3) noBtn.textContent = noTexts[2];
+
+  // 4: Meme 2s
+  if(noClicks === 4 && !memeShown){
+    memeShown = true;
+    showMemeFor2s();
+  }
+
+  // 5: NO -> riesiges JA (Ja bleibt weiterhin da!)
+  if(noClicks === 5){
+    noTurnedHuge = true;
+
+    noBtn.textContent = "Ja 💘";
+    noBtn.classList.add("becomeHuge");
+
+    // Klick auf den riesigen Button muss man am Ende drücken:
+    noBtn.onclick = showFinal;
+    return;
+  }
+
+  // Verschieben + Ja wird größer
+  moveNoStrong();
+  yesScale += 0.22;
+  yesBtn.style.transform = `scale(${yesScale})`;
+});
 </script>
 
 </body>
