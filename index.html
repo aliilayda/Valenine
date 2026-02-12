@@ -6,124 +6,145 @@
 <title>Ilayda ❤️</title>
 
 <style>
-body{
-  margin:0;
-  font-family:Arial, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  background:linear-gradient(135deg,#f8cdda,#e1d5ff);
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  overflow:hidden;
-}
+  body{
+    margin:0;
+    font-family: Arial, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background: linear-gradient(135deg,#f8cdda,#e1d5ff);
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+  }
 
-.card{
-  width:90%;
-  max-width:420px;
-  background:#fff;
-  border-radius:26px;
-  padding:46px 22px 40px;
-  text-align:center;
-  box-shadow:0 18px 50px rgba(0,0,0,.12);
-  position:relative;
-  z-index:5;
-}
+  .card{
+    width:90%;
+    max-width:420px;
+    background:#fff;
+    border-radius:26px;
+    padding:46px 22px 40px;
+    text-align:center;
+    box-shadow:0 18px 50px rgba(0,0,0,.12);
+    position:relative;
+    z-index:5;
+  }
 
-#title{
-  margin:0 0 18px;
-  font-size:34px;
-  font-weight:900;
-}
+  #title{
+    margin:0 0 18px;
+    font-size:34px;
+    font-weight:900;
+  }
 
-#question{
-  font-size:24px;
-  font-weight:900;
-  margin-bottom:34px;
-}
+  #question{
+    font-size:24px;
+    font-weight:900;
+    line-height:1.25;
+    margin:0 0 34px;
+  }
 
-#buttonsArea{
-  height:130px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:60px;
-  position:relative;
-}
+  #buttonsArea{
+    height:130px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:60px;              /* dein Abstand */
+    position:relative;
+  }
 
-button{
-  border:none;
-  border-radius:999px;
-  padding:16px 36px;
-  font-size:18px;
-  cursor:pointer;
-  transition:.2s ease;
-  white-space:nowrap;
-  -webkit-tap-highlight-color: transparent;
-  user-select:none;
-}
+  button{
+    border:none;
+    border-radius:999px;
+    padding:16px 36px;
+    font-size:18px;
+    cursor:pointer;
+    transition: transform .2s ease;
+    -webkit-tap-highlight-color: transparent;
+    user-select:none;
+    white-space:nowrap;
+  }
 
-#yes{
-  background:#ff2f75;
-  color:#fff;
-}
+  #yes{
+    background:#ff2f75;
+    color:#fff;
+  }
 
-#nein{
-  background:#111;
-  color:#fff;
-  padding:18px 40px;
-  transform-origin:center center;
-}
+  #nein{
+    background:#111;
+    color:#fff;
+    padding:18px 40px;
+  }
 
-#meme{
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%) scale(.85);
-  opacity:0;
-  width:280px;
-  max-width:80vw;
-  transition:.3s ease;
-  z-index:9999;
-  pointer-events:none;
-}
+  /* Meme groß mittig */
+  #meme{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%) scale(.85);
+    opacity:0;
+    width:280px;
+    max-width:80vw;
+    transition: opacity .25s ease, transform .25s ease;
+    z-index:9999;
+    pointer-events:none;
+    filter: drop-shadow(0 18px 40px rgba(0,0,0,.28));
+    border-radius:14px;
+  }
 
-#result{
-  display:none;
-  margin-top:18px;
-  font-size:30px;
-  font-weight:900;
-}
+  #result{
+    display:none;
+    margin-top:18px;
+    font-size:30px;
+    font-weight:900;
+    line-height:1.2;
+  }
+  #result.show{
+    display:block;
+    animation: pop .35s ease both;
+  }
+  @keyframes pop{
+    from{ transform: translateY(8px) scale(.98); opacity:0; }
+    to{ transform: translateY(0) scale(1); opacity:1; }
+  }
 
-.confetti{
-  position:fixed;
-  top:-20px;
-  width:10px;
-  height:14px;
-  border-radius:3px;
-  opacity:.95;
-  pointer-events:none;
-  z-index:2000;
-  animation:fall var(--dur) linear forwards;
-}
-@keyframes fall{
-  to{ transform:translateY(120vh) rotate(720deg); }
-}
+  /* Dauer-Konfetti (schön & langsam) */
+  .confetti{
+    position:fixed;
+    top:-20px;
+    width:10px;
+    height:14px;
+    border-radius:3px;
+    opacity:.95;
+    pointer-events:none;
+    z-index:2000;
+    animation: confettiFall var(--dur) ease-in forwards;
+    transform: translateX(var(--x0)) rotate(0deg);
+  }
+  @keyframes confettiFall{
+    0%   { transform: translateX(var(--x0)) translateY(-20px) rotate(0deg); opacity:0; }
+    12%  { opacity:1; }
+    100% { transform: translateX(var(--x1)) translateY(120vh) rotate(540deg); opacity:1; }
+  }
 
-.heart{
-  position:fixed;
-  bottom:-20px;
-  font-size:22px;
-  animation:floatUp 6s ease forwards;
-}
-@keyframes floatUp{
-  to{ transform:translateY(-120vh); opacity:0; }
-}
+  .heart{
+    position:fixed;
+    top:105vh;
+    pointer-events:none;
+    z-index:2001;
+    opacity:0;
+    animation: heartFloat var(--hdur) ease-out forwards;
+    transform: translateX(var(--hx)) translateY(0) scale(var(--hs));
+  }
+  @keyframes heartFloat{
+    0%   { opacity:0; transform: translateX(var(--hx)) translateY(0) scale(var(--hs)); }
+    15%  { opacity:1; }
+    100% { opacity:0; transform: translateX(var(--hx2)) translateY(-120vh) scale(calc(var(--hs) + 0.25)); }
+  }
 </style>
 </head>
 
 <body>
 
-<img id="meme" src="https://i.imgur.com/AexB9oC.jpeg">
+<img id="meme" src="https://i.imgur.com/AexB9oC.jpeg" alt="meme">
 
 <div class="card">
   <h1 id="title">Ilayda ❤️</h1>
@@ -138,157 +159,204 @@ button{
 </div>
 
 <script>
-const yes = document.getElementById("yes");
-const nein = document.getElementById("nein");
-const meme = document.getElementById("meme");
-const title = document.getElementById("title");
-const question = document.getElementById("question");
-const buttonsArea = document.getElementById("buttonsArea");
-const result = document.getElementById("result");
+  const yes = document.getElementById("yes");
+  const nein = document.getElementById("nein");
+  const meme = document.getElementById("meme");
+  const title = document.getElementById("title");
+  const question = document.getElementById("question");
+  const buttonsArea = document.getElementById("buttonsArea");
+  const result = document.getElementById("result");
 
-let clicks = 0;
-let floating = false;
-let bigMode = false;
-let confettiStarted = false;
+  let clicks = 0;
+  let floating = false;
+  let memeShown = false;
+  let bigMode = false;
 
-const texts = [
-  "Überleg nochmal",
-  "Ich bring auch Snacks",
-  "Letzte Chance"
-];
+  let confettiTimer = null;
+  let heartsTimer = null;
 
-function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+  let neinSpacer = null;         // Platzhalter im Flex (damit Ja NICHT rutscht)
+  let neinFixedLeft = null;      // feste X-Position (clamped)
+  const padX = 10;
 
-function makeFloating(){
-  if(floating) return;
-  floating = true;
+  const texts = [
+    "Überleg nochmal",
+    "Ich bring auch Snacks",
+    "Letzte Chance"
+  ];
 
-  const r = nein.getBoundingClientRect();
+  function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
-  // FIX 1: mit r.width clampen (offsetWidth kann hier noch daneben liegen)
-  const pad = 10;
-  const maxLeft = window.innerWidth - r.width - pad;
-  const left = clamp(r.left, pad, maxLeft);
+  function makeNeinFloating(){
+    if (floating) return;
+    floating = true;
 
-  nein.style.position = "fixed";
-  nein.style.left = left + "px";
-  nein.style.top = r.top + "px";
-  nein.style.zIndex = "9000";
-  nein.style.transition = "top .6s ease";
-}
+    // 1) Maße/Position vom Nein im Layout holen
+    const r = nein.getBoundingClientRect();
 
-function moveVertical(){
-  const pad = 10;
-  const max = window.innerHeight - nein.offsetHeight - pad;
-  const y = pad + Math.random() * Math.max(10, max - pad);
-  nein.style.top = y + "px";
-}
+    // 2) Spacer in den Flex setzen (gleiche Größe) -> Ja bleibt exakt stehen
+    neinSpacer = document.createElement("div");
+    neinSpacer.style.width = r.width + "px";
+    neinSpacer.style.height = r.height + "px";
+    neinSpacer.style.flex = "0 0 auto";
+    buttonsArea.replaceChild(neinSpacer, nein);
 
-function showMeme(){
-  meme.style.opacity="1";
-  meme.style.transform="translate(-50%,-50%) scale(1)";
-  setTimeout(()=>{
-    meme.style.opacity="0";
-    meme.style.transform="translate(-50%,-50%) scale(.85)";
-  },2000);
-}
+    // 3) Nein an body hängen und fixed positionieren (ohne Layout-Shift)
+    document.body.appendChild(nein);
+    nein.style.position = "fixed";
+    nein.style.margin = "0";
+    nein.style.zIndex = "9000";
+    nein.style.transition = "top 0.75s ease-in-out, transform 0.2s ease, background 0.2s ease";
 
-// FIX 2: Ja darf NICHT „wandern“ -> niemals display:none (Layout bleibt)
-// Stattdessen: visibility hidden + pointer-events none (Platz bleibt!)
-function turnBigYes(){
-  bigMode = true;
+    // X clamp: nie halb draußen
+    const maxLeft = window.innerWidth - r.width - padX;
+    neinFixedLeft = clamp(r.left, padX, maxLeft);
+    nein.style.left = neinFixedLeft + "px";
 
-  yes.style.visibility = "hidden";
-  yes.style.pointerEvents = "none";
-
-  nein.textContent="Ja 💘";
-  nein.style.background="#ff2f75";
-  nein.style.zIndex="10000";
-
-  // Groß werden, aber ohne dass irgendwas im Flex-Layout neu ausrichtet
-  // (Nein ist fixed, daher unabhängig vom Container)
-  nein.style.transition = "transform .25s ease, top .6s ease";
-  nein.style.transform = "scale(2.8)";
-
-  nein.onclick = finalYes;
-}
-
-function finalYes(){
-  title.style.display="none";
-  question.style.display="none";
-  buttonsArea.style.display="none";
-
-  result.style.display="block";
-  result.innerHTML="YESSSS 🥳<br><br>Samstag 15 Uhr · Eichendorffring";
-
-  launchConfettiForeverDense();
-  launchHearts();
-}
-
-nein.addEventListener("click",()=>{
-  if(bigMode) return;
-
-  clicks++;
-  makeFloating();
-
-  if(clicks<=3){
-    nein.textContent=texts[clicks-1];
-    moveVertical();
-    return;
+    // Y bleibt wo er war
+    nein.style.top = r.top + "px";
   }
 
-  if(clicks===4){
-    showMeme();
-    moveVertical();
-    return;
+  // NUR hoch/runter (extrem)
+  function moveNeinVerticalExtreme(){
+    const padY = 10;
+    const maxY = window.innerHeight - nein.offsetHeight - padY;
+    const y = padY + Math.random() * Math.max(10, (maxY - padY));
+    nein.style.top = y + "px";
   }
 
-  if(clicks===5){
-    turnBigYes();
-  }
-});
-
-yes.addEventListener("click", finalYes);
-
-// Dauer-Konfetti dicht
-function launchConfettiForeverDense(){
-  if(confettiStarted) return;
-  confettiStarted = true;
-
-  function create(){
-    const c=document.createElement("div");
-    c.className="confetti";
-    c.style.left=Math.random()*100+"vw";
-    c.style.background=`hsl(${Math.random()*360},100%,55%)`;
-    const dur=5+Math.random()*3;
-    c.style.setProperty("--dur",dur+"s");
-    document.body.appendChild(c);
-    setTimeout(()=>c.remove(), dur*1000);
+  function showMeme2s(){
+    meme.style.opacity = "1";
+    meme.style.transform = "translate(-50%,-50%) scale(1)";
+    setTimeout(()=>{
+      meme.style.opacity = "0";
+      meme.style.transform = "translate(-50%,-50%) scale(.85)";
+    }, 2000);
   }
 
-  setInterval(create, 60); // dicht
-}
+  // 5. Klick: Nein -> Ja 💘 groß, aber IN DER BUTTON-ZONE (nicht auf der Frage)
+  function turnNeinIntoBigYesInButtonsZone(){
+    bigMode = true;
 
-function launchHearts(){
-  for(let i=0;i<25;i++){
-    const h=document.createElement("div");
-    h.className="heart";
-    h.textContent="❤️";
-    h.style.left=Math.random()*100+"vw";
-    document.body.appendChild(h);
-    setTimeout(()=>h.remove(),6000);
+    // Ja soll NICHT bewegen -> Ja bleibt im Layout (wir lassen Spacer + Ja unberührt)
+    // aber Ja darf am Ende nicht mehr klickbar/zu sehen sein:
+    yes.style.visibility = "hidden";
+    yes.style.pointerEvents = "none";
+
+    // Großes Ja in die Mitte der ButtonsArea setzen (damit Frage frei bleibt)
+    const a = buttonsArea.getBoundingClientRect();
+
+    nein.textContent = "Ja 💘";
+    nein.style.background = "#ff2f75";
+    nein.style.color = "#fff";
+
+    nein.style.left = (a.left + a.width/2) + "px";
+    nein.style.top  = (a.top  + a.height/2) + "px";
+    nein.style.transform = "translate(-50%,-50%) scale(2.8)";
+    nein.style.zIndex = "10000";
+
+    nein.onclick = finalYes;
   }
-}
 
-// wenn Bildschirm dreht/resize: Nein bleibt im Screen (rechts nicht abgehackt)
-window.addEventListener("resize", () => {
-  if(!floating || bigMode) return;
-  const pad = 10;
-  const r = nein.getBoundingClientRect();
-  const maxLeft = window.innerWidth - r.width - pad;
-  const left = clamp(r.left, pad, maxLeft);
-  nein.style.left = left + "px";
-});
+  function finalYes(){
+    title.style.display = "none";
+    question.style.display = "none";
+    buttonsArea.style.display = "none";
+    meme.style.opacity = "0";
+
+    result.classList.add("show");
+    result.style.display = "block";
+    result.innerHTML = "YESSSS 🥳<br><br>Samstag 15 Uhr · Eichendorffring";
+
+    startConfettiForeverDense();
+    startHeartsNice();
+  }
+
+  nein.addEventListener("click", () => {
+    if (bigMode) return;
+
+    clicks++;
+    makeNeinFloating();
+
+    if (clicks <= 3){
+      nein.textContent = texts[clicks - 1];
+      moveNeinVerticalExtreme();
+      return;
+    }
+
+    if (clicks === 4 && !memeShown){
+      memeShown = true;
+      showMeme2s();
+      moveNeinVerticalExtreme();
+      return;
+    }
+
+    if (clicks === 5){
+      turnNeinIntoBigYesInButtonsZone();
+    }
+  });
+
+  yes.addEventListener("click", finalYes);
+
+  // Dauer-Konfetti (dicht)
+  function startConfettiForeverDense(){
+    if (confettiTimer) return;
+
+    function createConfetti(){
+      const c = document.createElement("div");
+      c.className = "confetti";
+      c.style.left = (Math.random()*100) + "vw";
+      c.style.background = `hsl(${Math.random()*360},100%,55%)`;
+
+      const dur = 5.8 + Math.random()*2.4;
+      c.style.setProperty("--dur", dur + "s");
+      c.style.setProperty("--x0", (Math.random()*40 - 20) + "px");
+      c.style.setProperty("--x1", (Math.random()*160 - 80) + "px");
+
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(), (dur*1000) + 300);
+    }
+
+    confettiTimer = setInterval(createConfetti, 60);
+  }
+
+  function startHeartsNice(){
+    if (heartsTimer) return;
+
+    const start = Date.now();
+    heartsTimer = setInterval(() => {
+      if (Date.now() - start > 15000){
+        clearInterval(heartsTimer);
+        heartsTimer = null;
+        return;
+      }
+
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.textContent = "❤️";
+      h.style.left = (Math.random()*100) + "vw";
+
+      const hdur = 5.5 + Math.random()*2.5;
+      h.style.setProperty("--hdur", hdur + "s");
+      h.style.setProperty("--hx", (Math.random()*20 - 10) + "px");
+      h.style.setProperty("--hx2", (Math.random()*80 - 40) + "px");
+      h.style.setProperty("--hs", (0.9 + Math.random()*0.6).toFixed(2));
+      h.style.fontSize = (18 + Math.random()*18) + "px";
+
+      document.body.appendChild(h);
+      setTimeout(()=>h.remove(), (hdur*1000) + 400);
+    }, 240);
+  }
+
+  // Bei Resize: Nein bleibt komplett im Screen (nie halb draußen)
+  window.addEventListener("resize", () => {
+    if (!floating || bigMode) return;
+
+    const r = nein.getBoundingClientRect();
+    const maxLeft = window.innerWidth - r.width - padX;
+    neinFixedLeft = clamp(neinFixedLeft ?? r.left, padX, maxLeft);
+    nein.style.left = neinFixedLeft + "px";
+  });
 </script>
 
 </body>
