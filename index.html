@@ -58,6 +58,8 @@ button{
   cursor:pointer;
   transition:.2s ease;
   white-space:nowrap;
+  -webkit-tap-highlight-color: transparent;
+  user-select:none;
 }
 
 #yes{
@@ -69,6 +71,7 @@ button{
   background:#111;
   color:#fff;
   padding:18px 40px;
+  transform-origin:center center;
 }
 
 #meme{
@@ -102,11 +105,8 @@ button{
   z-index:2000;
   animation:fall var(--dur) linear forwards;
 }
-
 @keyframes fall{
-  to{
-    transform:translateY(120vh) rotate(720deg);
-  }
+  to{ transform:translateY(120vh) rotate(720deg); }
 }
 
 .heart{
@@ -115,12 +115,8 @@ button{
   font-size:22px;
   animation:floatUp 6s ease forwards;
 }
-
 @keyframes floatUp{
-  to{
-    transform:translateY(-120vh);
-    opacity:0;
-  }
+  to{ transform:translateY(-120vh); opacity:0; }
 }
 </style>
 </head>
@@ -153,6 +149,7 @@ const result = document.getElementById("result");
 let clicks = 0;
 let floating = false;
 let bigMode = false;
+let confettiStarted = false;
 
 const texts = [
   "Überleg nochmal",
@@ -160,27 +157,31 @@ const texts = [
   "Letzte Chance"
 ];
 
+function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
 function makeFloating(){
   if(floating) return;
   floating = true;
 
   const r = nein.getBoundingClientRect();
-  nein.style.position="fixed";
 
+  // FIX 1: mit r.width clampen (offsetWidth kann hier noch daneben liegen)
   const pad = 10;
-  const maxLeft = window.innerWidth - nein.offsetWidth - pad;
-  const clampedLeft = Math.max(pad, Math.min(maxLeft, r.left));
-  nein.style.left = clampedLeft + "px";
+  const maxLeft = window.innerWidth - r.width - pad;
+  const left = clamp(r.left, pad, maxLeft);
 
-  nein.style.top=r.top+"px";
-  nein.style.zIndex="9000";
-  nein.style.transition="top .6s ease";
+  nein.style.position = "fixed";
+  nein.style.left = left + "px";
+  nein.style.top = r.top + "px";
+  nein.style.zIndex = "9000";
+  nein.style.transition = "top .6s ease";
 }
 
 function moveVertical(){
-  const max = window.innerHeight - nein.offsetHeight - 10;
-  const y = 10 + Math.random()*max;
-  nein.style.top=y+"px";
+  const pad = 10;
+  const max = window.innerHeight - nein.offsetHeight - pad;
+  const y = pad + Math.random() * Math.max(10, max - pad);
+  nein.style.top = y + "px";
 }
 
 function showMeme(){
@@ -192,15 +193,22 @@ function showMeme(){
   },2000);
 }
 
+// FIX 2: Ja darf NICHT „wandern“ -> niemals display:none (Layout bleibt)
+// Stattdessen: visibility hidden + pointer-events none (Platz bleibt!)
 function turnBigYes(){
   bigMode = true;
 
-  yes.style.display="none";
+  yes.style.visibility = "hidden";
+  yes.style.pointerEvents = "none";
 
   nein.textContent="Ja 💘";
   nein.style.background="#ff2f75";
-  nein.style.transform="scale(2.8)";
   nein.style.zIndex="10000";
+
+  // Groß werden, aber ohne dass irgendwas im Flex-Layout neu ausrichtet
+  // (Nein ist fixed, daher unabhängig vom Container)
+  nein.style.transition = "transform .25s ease, top .6s ease";
+  nein.style.transform = "scale(2.8)";
 
   nein.onclick = finalYes;
 }
@@ -213,7 +221,7 @@ function finalYes(){
   result.style.display="block";
   result.innerHTML="YESSSS 🥳<br><br>Samstag 15 Uhr · Eichendorffring";
 
-  launchConfetti();
+  launchConfettiForeverDense();
   launchHearts();
 }
 
@@ -226,11 +234,13 @@ nein.addEventListener("click",()=>{
   if(clicks<=3){
     nein.textContent=texts[clicks-1];
     moveVertical();
+    return;
   }
 
   if(clicks===4){
     showMeme();
     moveVertical();
+    return;
   }
 
   if(clicks===5){
@@ -238,9 +248,13 @@ nein.addEventListener("click",()=>{
   }
 });
 
-yes.addEventListener("click",finalYes);
+yes.addEventListener("click", finalYes);
 
-function launchConfetti(){
+// Dauer-Konfetti dicht
+function launchConfettiForeverDense(){
+  if(confettiStarted) return;
+  confettiStarted = true;
+
   function create(){
     const c=document.createElement("div");
     c.className="confetti";
@@ -249,9 +263,10 @@ function launchConfetti(){
     const dur=5+Math.random()*3;
     c.style.setProperty("--dur",dur+"s");
     document.body.appendChild(c);
-    setTimeout(()=>c.remove(),dur*1000);
+    setTimeout(()=>c.remove(), dur*1000);
   }
-  setInterval(create,60);
+
+  setInterval(create, 60); // dicht
 }
 
 function launchHearts(){
@@ -264,6 +279,16 @@ function launchHearts(){
     setTimeout(()=>h.remove(),6000);
   }
 }
+
+// wenn Bildschirm dreht/resize: Nein bleibt im Screen (rechts nicht abgehackt)
+window.addEventListener("resize", () => {
+  if(!floating || bigMode) return;
+  const pad = 10;
+  const r = nein.getBoundingClientRect();
+  const maxLeft = window.innerWidth - r.width - pad;
+  const left = clamp(r.left, pad, maxLeft);
+  nein.style.left = left + "px";
+});
 </script>
 
 </body>
