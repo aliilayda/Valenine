@@ -18,8 +18,8 @@
   }
 
   .card{
-    background:white;
-    padding:46px 32px;
+    background:#fff;
+    padding:46px 32px 38px;
     border-radius:26px;
     text-align:center;
     width:90%;
@@ -32,20 +32,21 @@
   #title{
     margin:0 0 18px;
     font-size:34px;
+    font-weight:900;
   }
 
   #question{
     font-size:24px;
-    font-weight:800;
+    font-weight:900;
     line-height:1.35;
-    margin:0 0 28px;
+    margin:0 0 26px;
   }
 
-  /* AREA: Buttons leben NUR hier drin */
+  /* Buttons live here */
   #buttonsArea{
     position:relative;
-    height:170px;
     width:100%;
+    height:170px;
   }
 
   .btn{
@@ -56,15 +57,16 @@
     cursor:pointer;
     user-select:none;
     -webkit-tap-highlight-color: transparent;
-    white-space: nowrap;
+    white-space:nowrap;
     position:absolute;
-    transition: transform .18s ease, background .18s ease, opacity .2s ease;
+    transition: transform .18s ease, background .18s ease, opacity .2s ease, left .15s ease, top .15s ease;
+    box-shadow:0 10px 24px rgba(0,0,0,0.10);
   }
 
   #yes{
     background:#ff2f74;
-    color:white;
-    left:22%;
+    color:#fff;
+    left:20%;
     top:50%;
     transform: translateY(-50%) scale(1);
     z-index:2;
@@ -72,24 +74,26 @@
 
   #nein{
     background:#111;
-    color:white;
+    color:#fff;
     left:62%;
     top:50%;
-    transform: translateY(-50%) scale(1.08);
-    z-index:3; /* immer über JA sichtbar */
+    transform: translateY(-50%) scale(1.12); /* am Anfang etwas größer */
+    z-index:3; /* bleibt sichtbar */
   }
 
-  /* Meme */
+  /* Meme overlay */
   #memePic{
     position:fixed;
-    bottom:0;
     left:50%;
+    bottom:10px;
     transform:translateX(-50%) scale(0);
     opacity:0;
-    transition: transform .35s ease, opacity .35s ease;
+    transition: transform .25s ease, opacity .25s ease;
     z-index:9998;
     pointer-events:none;
-    max-height:65vh;
+    max-height:58vh;
+    filter: drop-shadow(0 12px 28px rgba(0,0,0,.25));
+    border-radius:14px;
   }
 
   /* Ergebnis */
@@ -139,19 +143,19 @@
     100% { transform: translateY(-120vh) scale(1.25); opacity: 0; }
   }
 
-  /* riesiges JA (aus Nein) */
+  /* Nein -> riesiges Ja */
   .hugeYes{
     left:50% !important;
     top:58% !important;
-    transform: translate(-50%,-50%) scale(3) !important;
     background:#ff2f74 !important;
     color:#fff !important;
     z-index:99999 !important;
+    transform: translate(-50%,-50%) scale(3) !important;
     animation: hugePop .45s ease both;
   }
   @keyframes hugePop{
     0%   { transform: translate(-50%,-50%) scale(1); }
-    60%  { transform: translate(-50%,-50%) scale(3.4); }
+    60%  { transform: translate(-50%,-50%) scale(3.45); }
     100% { transform: translate(-50%,-50%) scale(3.0); }
   }
 </style>
@@ -188,8 +192,8 @@ let memeShown = false;
 let turnedHuge = false;
 
 const neinTexts = [
-  "Überleg nochmal 😌",
-  "Ich bring auch Snacks 😏",
+  "Ilayda überleg nochmal 😌",
+  "Ich bring auch Snacks 😉",
   "Bist du dir wirklich sicher?"
 ];
 
@@ -202,7 +206,7 @@ function showMeme2s(){
   }, 2000);
 }
 
-function rectInArea(el){
+function getRectInArea(el){
   const r = el.getBoundingClientRect();
   const a = areaEl.getBoundingClientRect();
   return {
@@ -215,32 +219,30 @@ function rectInArea(el){
   };
 }
 
-function placeNeinNoOverlap(){
-  // Grenzen innerhalb der Area
+function placeNeinAwayFromYes(){
   const a = areaEl.getBoundingClientRect();
-  const b = neinBtn.getBoundingClientRect();
+  const neinAbs = neinBtn.getBoundingClientRect();
 
   const minX = 10;
   const minY = 10;
-  const maxX = Math.max(10, a.width  - b.width  - 10);
-  const maxY = Math.max(10, a.height - b.height - 10);
+  const maxX = Math.max(10, a.width  - neinAbs.width  - 10);
+  const maxY = Math.max(10, a.height - neinAbs.height - 10);
 
-  // Sicherheitsabstand zu YES
-  const yesR = rectInArea(yesBtn);
-  const safe = Math.max(yesR.w, yesR.h) / 2 + Math.max(b.width, b.height)/2 + 24;
+  const yesR = getRectInArea(yesBtn);
+  const safeDist = (Math.max(yesR.w, yesR.h)/2) + (Math.max(neinAbs.width, neinAbs.height)/2) + 26;
 
   let best = null;
 
-  for(let i=0;i<40;i++){
-    const x = minX + Math.random() * (maxX - minX);
-    const y = minY + Math.random() * (maxY - minY);
+  for(let i=0;i<60;i++){
+    const x = minX + Math.random()*(maxX-minX);
+    const y = minY + Math.random()*(maxY-minY);
 
-    const cx = x + b.width/2;
-    const cy = y + b.height/2;
+    const cx = x + neinAbs.width/2;
+    const cy = y + neinAbs.height/2;
 
     const dist = Math.hypot(cx - yesR.cx, cy - yesR.cy);
 
-    if(dist >= safe){
+    if(dist >= safeDist){
       best = {x,y};
       break;
     }
@@ -249,16 +251,18 @@ function placeNeinNoOverlap(){
 
   neinBtn.style.left = best.x + "px";
   neinBtn.style.top  = best.y + "px";
-  neinBtn.style.transform = "scale(1.08)";
 
+  // kleiner "sprung"-effekt
   neinBtn.animate(
-    [{ transform:"scale(1.08)" }, { transform:"scale(1.16)" }, { transform:"scale(1.08)" }],
+    [{ transform:"translateY(0) scale(1.12)" },
+     { transform:"translateY(-2px) scale(1.18)" },
+     { transform:"translateY(0) scale(1.12)" }],
     { duration: 170, easing: "ease-out" }
   );
 }
 
 function launchConfetti(){
-  for(let i=0;i<80;i++){
+  for(let i=0;i<90;i++){
     const c = document.createElement("div");
     c.className = "confetti";
     c.style.left = Math.random()*100 + "vw";
@@ -269,20 +273,21 @@ function launchConfetti(){
 }
 
 function launchHearts(){
-  for(let i=0;i<18;i++){
+  for(let i=0;i<22;i++){
     const h = document.createElement("div");
     h.className = "heart";
     h.textContent = "❤️";
     h.style.left = (Math.random()*100) + "vw";
-    h.style.fontSize = (18 + Math.random()*18) + "px";
+    h.style.fontSize = (18 + Math.random()*20) + "px";
     h.style.animationDuration = (2.6 + Math.random()*1.2) + "s";
     h.style.animationDelay = (Math.random()*0.6) + "s";
     document.body.appendChild(h);
-    setTimeout(()=>h.remove(), 4500);
+    setTimeout(()=>h.remove(), 4800);
   }
 }
 
 function showFinal(){
+  // garantiert weg:
   titleEl.style.display = "none";
   qEl.style.display = "none";
   areaEl.style.display = "none";
@@ -317,7 +322,7 @@ neinBtn.addEventListener("click", () => {
   if(clicks === 5){
     turnedHuge = true;
 
-    // am Ende darf nur noch das aus "Nein" gewordene JA existieren
+    // nur noch DER eine Button bleibt
     yesBtn.style.display = "none";
 
     neinBtn.textContent = "Ja 💘";
@@ -326,10 +331,10 @@ neinBtn.addEventListener("click", () => {
     return;
   }
 
-  // springt ohne Überlappung
-  // (wichtig: erst springen, dann wachsen – so stimmen die Maße)
-  placeNeinNoOverlap();
+  // springen ohne Überlappung
+  placeNeinAwayFromYes();
 
+  // Ja wird größer
   yesScale += 0.20;
   yesBtn.style.transform = `translateY(-50%) scale(${yesScale.toFixed(2)})`;
 });
