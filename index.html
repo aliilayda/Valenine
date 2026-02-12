@@ -1,97 +1,169 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Ilayda ❤️</title>
 
 <style>
-body{
-  margin:0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg,#f8d7e3,#f3e6ec);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-  overflow:hidden;
-}
+  body{
+    margin:0;
+    font-family: Arial, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background: linear-gradient(135deg,#f8d7e3,#f3e6ec);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    overflow:hidden;
+  }
 
-.card{
-  background:white;
-  padding:50px 30px;
-  border-radius:30px;
-  text-align:center;
-  width:90%;
-  max-width:420px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.1);
-  position:relative;
-}
+  .card{
+    background:white;
+    padding:50px 30px;
+    border-radius:30px;
+    text-align:center;
+    width:90%;
+    max-width:420px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.10);
+    position:relative;
+    z-index:10;
+  }
 
-h1{
-  font-size:34px;
-  margin-bottom:25px;
-}
+  h1{
+    font-size:34px;
+    margin:0 0 18px;
+  }
 
-#question{
-  font-size:24px;
-  font-weight:700;
-  margin-bottom:40px;
-  line-height:1.4;
-}
+  #question{
+    font-size:24px;
+    font-weight:800;
+    line-height:1.35;
+    margin:0 0 28px;
+  }
 
-.buttons{
-  display:flex;
-  justify-content:center;
-  gap:25px;
-}
+  /* Bereich, in dem NO rumhüpft */
+  .buttons{
+    position:relative;
+    height:130px;
+  }
 
-button{
-  padding:16px 34px;
-  font-size:18px;
-  border:none;
-  border-radius:40px;
-  cursor:pointer;
-  transition:0.3s ease;
-}
+  button{
+    padding:16px 34px;
+    font-size:18px;
+    border:none;
+    border-radius:40px;
+    cursor:pointer;
+    transition: transform .2s ease, background .2s ease;
+    position:absolute;
+    top:42px;
+    user-select:none;
+  }
 
-#yes{
-  background:#ff3b7f;
-  color:white;
-}
+  #yes{
+    background:#ff3b7f;
+    color:white;
+    left:18%;
+    z-index:3;
+  }
 
-#no{
-  background:black;
-  color:white;
-  position:relative;
-}
+  #no{
+    background:#111;
+    color:white;
+    left:55%;
+    z-index:2;
+  }
 
-#result{
-  display:none;
-  margin-top:40px;
-  font-size:28px;
-  font-weight:900;
-}
+  /* Meme */
+  #memePic{
+    position:fixed;
+    bottom:0;
+    left:50%;
+    transform:translateX(-50%) scale(0);
+    transition: transform .35s ease, opacity .35s ease;
+    z-index:999;
+    pointer-events:none;
+    max-height:70vh;
+    opacity:0;
+  }
+
+  /* Ergebnis */
+  #result{
+    display:none;
+    margin-top:24px;
+    font-weight:900;
+    line-height:1.15;
+  }
+  #result.show{
+    display:block;
+    animation: popIn .28s ease both;
+  }
+  @keyframes popIn{
+    from{ transform: translateY(8px) scale(.98); opacity:0; }
+    to{ transform: translateY(0) scale(1); opacity:1; }
+  }
+  .yess{ font-size:26px; margin-bottom:10px; }
+  .place{ font-size:30px; }
+
+  /* Dezente Party */
+  .confetti{
+    position:fixed;
+    width:8px;
+    height:12px;
+    border-radius:2px;
+    opacity:.9;
+    pointer-events:none;
+    z-index:5;
+    animation: fall 2.6s linear forwards;
+  }
+  @keyframes fall{
+    0%{ transform: translateY(-12px) rotate(0deg); }
+    100%{ transform: translateY(110vh) rotate(360deg); }
+  }
+  .heart{
+    position:fixed;
+    pointer-events:none;
+    z-index:6;
+    opacity:.95;
+    animation: floatUp 3.2s ease forwards;
+  }
+  @keyframes floatUp{
+    0%{ transform: translateY(0) scale(1); opacity:0; }
+    12%{ opacity:1; }
+    100%{ transform: translateY(-115vh) scale(1.25); opacity:0; }
+  }
+
+  /* NO -> riesiges JA (Flip + Grow) */
+  .flipGrow{
+    left:50% !important;
+    top:42px !important;
+    background:#ff3b7f !important;
+    color:#fff !important;
+    z-index:1000 !important;
+    animation: flipGrow .55s ease both;
+    transform-origin:center;
+  }
+  @keyframes flipGrow{
+    0%   { transform: translateX(-50%) rotateY(0deg) scale(1); }
+    45%  { transform: translateX(-50%) rotateY(90deg) scale(1.15); }
+    100% { transform: translateX(-50%) rotateY(180deg) scale(3.2); }
+  }
 </style>
 </head>
 
 <body>
 
+<img id="memePic" src="https://i.imgur.com/AexB9oC.jpeg" alt="meme">
+
 <div class="card">
+  <h1 id="title">Ilayda ❤️</h1>
+  <div id="question">Willst du mein Valentinstags-Date sein? ❤️</div>
 
-<h1>Ilayda ❤️</h1>
+  <div class="buttons" id="buttonsArea">
+    <button id="yes">Ja 😍</button>
+    <button id="no">Nein 🙃</button>
+  </div>
 
-<h2 id="question">
-  Willst du mein Valentinstags-Date sein? ❤️
-</h2>
-
-<div class="buttons">
-  <button id="yes">Ja 😍</button>
-  <button id="no">Nein 🙃</button>
-</div>
-
-<div id="result"></div>
-
+  <div id="result"></div>
 </div>
 
 <script>
@@ -99,109 +171,128 @@ const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const result = document.getElementById("result");
 const question = document.getElementById("question");
+const title = document.getElementById("title");
+const buttonsArea = document.getElementById("buttonsArea");
+const meme = document.getElementById("memePic");
 
 let noClicks = 0;
 let yesScale = 1;
 let memeShown = false;
+let noHasBecomeYes = false;
 
-/* MEME */
-const meme = document.createElement("img");
-meme.src = "https://i.imgur.com/AexB9oC.jpeg";
-meme.style.position = "fixed";
-meme.style.bottom = "0";
-meme.style.left = "50%";
-meme.style.transform = "translateX(-50%) scale(0)";
-meme.style.transition = "0.4s ease";
-meme.style.zIndex = "999";
-meme.style.pointerEvents = "none";
-document.body.appendChild(meme);
+const noTexts = [
+  "Überleg nochmal 😌",
+  "Ich bring auch Snacks 😏",
+  "Bist du dir wirklich sicher?"
+];
 
-/* NEIN */
+function moveNo(){
+  const area = buttonsArea.getBoundingClientRect();
+  const b = noBtn.getBoundingClientRect();
+  const pad = 10;
+
+  const maxX = Math.max(0, area.width - b.width - pad);
+  const maxY = Math.max(0, area.height - b.height - pad);
+
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
+
+  noBtn.style.left = x + "px";
+  noBtn.style.top  = y + "px";
+
+  noBtn.style.transform = "scale(1.08)";
+  setTimeout(()=> noBtn.style.transform = "scale(1)", 90);
+}
+
+function showMemeFor2s(){
+  meme.style.opacity = "1";
+  meme.style.transform = "translateX(-50%) scale(0.65)";
+  setTimeout(()=>{
+    meme.style.opacity = "0";
+    meme.style.transform = "translateX(-50%) scale(0)";
+  }, 2000);
+}
+
+function becomeHugeYes(){
+  if(noHasBecomeYes) return;
+  noHasBecomeYes = true;
+
+  noBtn.classList.add("flipGrow");
+  noBtn.textContent = "Ja 💘";
+
+  // Nach dem Flip: Klick auf NO(JA) löst JA aus
+  setTimeout(()=>{
+    noBtn.onclick = () => yesBtn.click();
+  }, 560);
+}
+
+function launchPartyClean(){
+  // dezentes Konfetti
+  const confettiCount = 36;
+  for(let i=0;i<confettiCount;i++){
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.style.left = (Math.random()*100) + "vw";
+    c.style.background = `hsl(${Math.random()*360}, 90%, 55%)`;
+    c.style.animationDuration = (2.2 + Math.random()*0.8) + "s";
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(), 3300);
+  }
+
+  // paar Herzen
+  const heartCount = 14;
+  for(let i=0;i<heartCount;i++){
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.textContent = "❤️";
+    h.style.left = (Math.random()*100) + "vw";
+    h.style.top = "105vh";
+    h.style.fontSize = (18 + Math.random()*18) + "px";
+    h.style.animationDuration = (2.6 + Math.random()*1.1) + "s";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(), 4200);
+  }
+}
+
 noBtn.addEventListener("click", () => {
+  if(noHasBecomeYes) return;
 
   noClicks++;
 
-  /* 4. Klick -> Meme */
-  if (noClicks === 4 && !memeShown) {
-    memeShown = true;
-    meme.style.transform = "translateX(-50%) scale(0.6)";
+  if(noClicks === 1) noBtn.textContent = noTexts[0];
+  if(noClicks === 2) noBtn.textContent = noTexts[1];
+  if(noClicks === 3) noBtn.textContent = noTexts[2];
 
-    setTimeout(() => {
-      meme.style.transform = "translateX(-50%) scale(0)";
-    }, 2000);
+  if(noClicks === 4 && !memeShown){
+    memeShown = true;
+    showMemeFor2s();
   }
 
-  /* Stark verschieben */
-  noBtn.style.position = "absolute";
-  noBtn.style.top = Math.random() * 70 + "%";
-  noBtn.style.left = Math.random() * 70 + "%";
+  if(noClicks === 5){
+    becomeHugeYes();
+    return;
+  }
 
-  /* Ja größer */
-  yesScale += 0.25;
+  moveNo();
+
+  // Ja bleibt da und wird größer
+  yesScale += 0.22;
   yesBtn.style.transform = `scale(${yesScale})`;
 });
 
-/* JA */
 yesBtn.addEventListener("click", () => {
-
+  title.style.display = "none";
   question.style.display = "none";
-  noBtn.style.display = "none";
-  yesBtn.style.display = "none";
+  buttonsArea.style.display = "none";
 
-  result.style.display = "block";
-  result.innerHTML = "Samstag 15 Uhr · Eichendorffring";
+  result.classList.add("show");
+  result.innerHTML = `
+    <div class="yess">YESSSS 🥳</div>
+    <div class="place">Samstag 15 Uhr · Eichendorffring</div>
+  `;
 
-  launchConfetti();
-  launchHearts();
+  launchPartyClean();
 });
-
-
-/* PARTY EFFEKTE */
-
-function launchConfetti(){
-  for(let i=0;i<80;i++){
-    let conf = document.createElement("div");
-    conf.style.position="fixed";
-    conf.style.width="8px";
-    conf.style.height="8px";
-    conf.style.backgroundColor=`hsl(${Math.random()*360},100%,50%)`;
-    conf.style.left=Math.random()*100+"vw";
-    conf.style.top="-10px";
-    conf.style.zIndex="1000";
-    conf.style.borderRadius="2px";
-    conf.style.transition="transform 3s linear";
-    document.body.appendChild(conf);
-
-    setTimeout(()=>{
-      conf.style.transform=`translateY(110vh) rotate(${Math.random()*720}deg)`;
-    },10);
-
-    setTimeout(()=>{
-      conf.remove();
-    },3000);
-  }
-}
-
-function launchHearts(){
-  for(let i=0;i<25;i++){
-    let heart=document.createElement("div");
-    heart.innerHTML="❤️";
-    heart.style.position="fixed";
-    heart.style.fontSize="24px";
-    heart.style.left=Math.random()*100+"vw";
-    heart.style.top="100vh";
-    heart.style.transition="transform 4s ease";
-    document.body.appendChild(heart);
-
-    setTimeout(()=>{
-      heart.style.transform=`translateY(-120vh)`;
-    },10);
-
-    setTimeout(()=>{
-      heart.remove();
-    },4000);
-  }
-}
 </script>
 
 </body>
