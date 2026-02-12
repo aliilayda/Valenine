@@ -29,7 +29,7 @@
     z-index:5;
   }
 
-  h1{
+  #title{
     margin:0 0 18px;
     font-size:34px;
   }
@@ -41,13 +41,11 @@
     margin:0 0 28px;
   }
 
-  /* Buttons Bereich */
+  /* AREA: Buttons leben NUR hier drin */
   #buttonsArea{
     position:relative;
-    height:150px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+    height:170px;
+    width:100%;
   }
 
   .btn{
@@ -63,27 +61,25 @@
     transition: transform .18s ease, background .18s ease, opacity .2s ease;
   }
 
-  /* Ja: links von Mitte */
   #yes{
     background:#ff2f74;
     color:white;
-    left:50%;
+    left:22%;
     top:50%;
-    transform: translate(-120%, -50%) scale(var(--ys, 1));
-    z-index:3;
+    transform: translateY(-50%) scale(1);
+    z-index:2;
   }
 
-  /* Nein: rechts von Mitte, etwas größer */
-  #no{
+  #nein{
     background:#111;
     color:white;
-    left:50%;
+    left:62%;
     top:50%;
-    transform: translate(20%, -50%) scale(1.08);
-    z-index:4; /* immer über Ja sichtbar */
+    transform: translateY(-50%) scale(1.08);
+    z-index:3; /* immer über JA sichtbar */
   }
 
-  /* Meme unten */
+  /* Meme */
   #memePic{
     position:fixed;
     bottom:0;
@@ -143,11 +139,11 @@
     100% { transform: translateY(-120vh) scale(1.25); opacity: 0; }
   }
 
-  /* NO -> riesiges JA (mittig) */
+  /* riesiges JA (aus Nein) */
   .hugeYes{
-    position:fixed !important;
     left:50% !important;
-    top:60% !important;
+    top:58% !important;
+    transform: translate(-50%,-50%) scale(3) !important;
     background:#ff2f74 !important;
     color:#fff !important;
     z-index:99999 !important;
@@ -171,7 +167,7 @@
 
   <div id="buttonsArea">
     <button id="yes" class="btn">Ja 😍</button>
-    <button id="no" class="btn">Nein 🙃</button>
+    <button id="nein" class="btn">Nein 🙃</button>
   </div>
 
   <div id="result"></div>
@@ -179,87 +175,86 @@
 
 <script>
 const yesBtn   = document.getElementById("yes");
-const noBtn    = document.getElementById("no");
+const neinBtn  = document.getElementById("nein");
 const titleEl  = document.getElementById("title");
 const qEl      = document.getElementById("question");
 const areaEl   = document.getElementById("buttonsArea");
 const resultEl = document.getElementById("result");
 const memeEl   = document.getElementById("memePic");
 
-let noClicks = 0;
+let clicks = 0;
 let yesScale = 1;
 let memeShown = false;
 let turnedHuge = false;
 
-const noTexts = [
+const neinTexts = [
   "Überleg nochmal 😌",
   "Ich bring auch Snacks 😏",
   "Bist du dir wirklich sicher?"
 ];
 
-// Hilfsfunktion: Rechtecke
-function rect(el){ return el.getBoundingClientRect(); }
-
-// Setzt NO an eine Position innerhalb der ButtonsArea – und prüft Abstand zu YES
-function moveNoSafely(){
-  const area = rect(areaEl);
-
-  // NO soll innerhalb Area bleiben
-  const noR = rect(noBtn);
-  const yesR = rect(yesBtn);
-
-  // Grenzen (innerhalb Area)
-  const minX = 10;
-  const maxX = Math.max(10, area.width - noR.width - 10);
-  const minY = 10;
-  const maxY = Math.max(10, area.height - noR.height - 10);
-
-  // Ziel: Abstand, damit NO nicht über JA liegt
-  const safeDist = (Math.max(yesR.width, yesR.height) / 2) + (Math.max(noR.width, noR.height) / 2) + 22;
-
-  // YES Mittelpunkt (relativ zur Area)
-  const yesCx = (yesR.left - area.left) + yesR.width/2;
-  const yesCy = (yesR.top  - area.top ) + yesR.height/2;
-
-  let best = null;
-
-  for(let i=0;i<25;i++){
-    const x = minX + Math.random() * (maxX - minX);
-    const y = minY + Math.random() * (maxY - minY);
-
-    const noCx = x + noR.width/2;
-    const noCy = y + noR.height/2;
-
-    const dist = Math.hypot(noCx - yesCx, noCy - yesCy);
-
-    if(dist >= safeDist){
-      best = {x,y};
-      break;
-    }
-
-    // falls nix perfekt passt: merke besten Versuch
-    if(!best || dist > best.dist) best = {x,y,dist};
-  }
-
-  // NO absolut in Area platzieren
-  noBtn.style.left = best.x + "px";
-  noBtn.style.top  = best.y + "px";
-  noBtn.style.transform = "scale(1.08)";
-
-  // Mini-jump
-  noBtn.animate(
-    [{ transform:"scale(1.08)" }, { transform:"scale(1.16)" }, { transform:"scale(1.08)" }],
-    { duration: 170, easing: "ease-out" }
-  );
-}
-
-function showMemeFor2s(){
+function showMeme2s(){
   memeEl.style.opacity = "1";
   memeEl.style.transform = "translateX(-50%) scale(0.65)";
   setTimeout(()=>{
     memeEl.style.opacity = "0";
     memeEl.style.transform = "translateX(-50%) scale(0)";
   }, 2000);
+}
+
+function rectInArea(el){
+  const r = el.getBoundingClientRect();
+  const a = areaEl.getBoundingClientRect();
+  return {
+    x: r.left - a.left,
+    y: r.top - a.top,
+    w: r.width,
+    h: r.height,
+    cx: (r.left - a.left) + r.width/2,
+    cy: (r.top  - a.top ) + r.height/2
+  };
+}
+
+function placeNeinNoOverlap(){
+  // Grenzen innerhalb der Area
+  const a = areaEl.getBoundingClientRect();
+  const b = neinBtn.getBoundingClientRect();
+
+  const minX = 10;
+  const minY = 10;
+  const maxX = Math.max(10, a.width  - b.width  - 10);
+  const maxY = Math.max(10, a.height - b.height - 10);
+
+  // Sicherheitsabstand zu YES
+  const yesR = rectInArea(yesBtn);
+  const safe = Math.max(yesR.w, yesR.h) / 2 + Math.max(b.width, b.height)/2 + 24;
+
+  let best = null;
+
+  for(let i=0;i<40;i++){
+    const x = minX + Math.random() * (maxX - minX);
+    const y = minY + Math.random() * (maxY - minY);
+
+    const cx = x + b.width/2;
+    const cy = y + b.height/2;
+
+    const dist = Math.hypot(cx - yesR.cx, cy - yesR.cy);
+
+    if(dist >= safe){
+      best = {x,y};
+      break;
+    }
+    if(!best || dist > best.dist) best = {x,y,dist};
+  }
+
+  neinBtn.style.left = best.x + "px";
+  neinBtn.style.top  = best.y + "px";
+  neinBtn.style.transform = "scale(1.08)";
+
+  neinBtn.animate(
+    [{ transform:"scale(1.08)" }, { transform:"scale(1.16)" }, { transform:"scale(1.08)" }],
+    { duration: 170, easing: "ease-out" }
+  );
 }
 
 function launchConfetti(){
@@ -288,7 +283,6 @@ function launchHearts(){
 }
 
 function showFinal(){
-  // alles oben weg
   titleEl.style.display = "none";
   qEl.style.display = "none";
   areaEl.style.display = "none";
@@ -306,41 +300,38 @@ function showFinal(){
 
 yesBtn.addEventListener("click", showFinal);
 
-noBtn.addEventListener("click", () => {
+neinBtn.addEventListener("click", () => {
   if(turnedHuge) return;
 
-  noClicks++;
+  clicks++;
 
-  if(noClicks === 1) noBtn.textContent = noTexts[0];
-  if(noClicks === 2) noBtn.textContent = noTexts[1];
-  if(noClicks === 3) noBtn.textContent = noTexts[2];
+  if(clicks === 1) neinBtn.textContent = neinTexts[0];
+  if(clicks === 2) neinBtn.textContent = neinTexts[1];
+  if(clicks === 3) neinBtn.textContent = neinTexts[2];
 
-  if(noClicks === 4 && !memeShown){
+  if(clicks === 4 && !memeShown){
     memeShown = true;
-    showMemeFor2s();
+    showMeme2s();
   }
 
-  if(noClicks === 5){
+  if(clicks === 5){
     turnedHuge = true;
 
-    // WICHTIG: Ja verschwindet -> kein Overlap mehr
+    // am Ende darf nur noch das aus "Nein" gewordene JA existieren
     yesBtn.style.display = "none";
 
-    // NO wird zu riesigem JA
-    noBtn.textContent = "Ja 💘";
-    noBtn.classList.add("hugeYes");
-
-    // Klick darauf -> Finale
-    noBtn.onclick = showFinal;
+    neinBtn.textContent = "Ja 💘";
+    neinBtn.classList.add("hugeYes");
+    neinBtn.onclick = showFinal;
     return;
   }
 
-  // NO bewegt sich sauber innerhalb der Karte, ohne JA zu überdecken
-  moveNoSafely();
+  // springt ohne Überlappung
+  // (wichtig: erst springen, dann wachsen – so stimmen die Maße)
+  placeNeinNoOverlap();
 
-  // JA wird größer (ohne Layout zu zerstören)
   yesScale += 0.20;
-  yesBtn.style.setProperty("--ys", yesScale.toFixed(2));
+  yesBtn.style.transform = `translateY(-50%) scale(${yesScale.toFixed(2)})`;
 });
 </script>
 
