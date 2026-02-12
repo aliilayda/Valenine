@@ -47,7 +47,7 @@
     display:flex;
     justify-content:center;
     align-items:center;
-    gap:60px;              /* dein Abstand */
+    gap:60px;
     position:relative;
   }
 
@@ -74,7 +74,6 @@
     padding:18px 40px;
   }
 
-  /* Meme groß mittig */
   #meme{
     position:fixed;
     top:50%;
@@ -106,7 +105,6 @@
     to{ transform: translateY(0) scale(1); opacity:1; }
   }
 
-  /* Dauer-Konfetti (schön & langsam) */
   .confetti{
     position:fixed;
     top:-20px;
@@ -175,8 +173,7 @@
   let confettiTimer = null;
   let heartsTimer = null;
 
-  let neinSpacer = null;         // Platzhalter im Flex (damit Ja NICHT rutscht)
-  let neinFixedLeft = null;      // feste X-Position (clamped)
+  let neinSpacer = null;         // hält Platz im Flex -> Ja bewegt sich nicht
   const padX = 10;
 
   const texts = [
@@ -187,37 +184,46 @@
 
   function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
+  // ✅ FIX 1: nach jeder Breitenänderung X neu clampen, damit nichts abgeschnitten wird
+  function clampNeinXInScreen(){
+    if(!floating || bigMode) return;
+
+    const r = nein.getBoundingClientRect();
+    const curLeft = parseFloat(nein.style.left || r.left);
+    const maxLeft = window.innerWidth - r.width - padX;
+    const newLeft = clamp(curLeft, padX, maxLeft);
+    nein.style.left = newLeft + "px";
+  }
+
   function makeNeinFloating(){
     if (floating) return;
     floating = true;
 
-    // 1) Maße/Position vom Nein im Layout holen
     const r = nein.getBoundingClientRect();
 
-    // 2) Spacer in den Flex setzen (gleiche Größe) -> Ja bleibt exakt stehen
+    // Spacer rein -> Ja bleibt exakt stehen
     neinSpacer = document.createElement("div");
     neinSpacer.style.width = r.width + "px";
     neinSpacer.style.height = r.height + "px";
     neinSpacer.style.flex = "0 0 auto";
     buttonsArea.replaceChild(neinSpacer, nein);
 
-    // 3) Nein an body hängen und fixed positionieren (ohne Layout-Shift)
+    // Nein an body hängen
     document.body.appendChild(nein);
     nein.style.position = "fixed";
     nein.style.margin = "0";
     nein.style.zIndex = "9000";
     nein.style.transition = "top 0.75s ease-in-out, transform 0.2s ease, background 0.2s ease";
 
-    // X clamp: nie halb draußen
+    // initial X clamp (basierend auf aktueller Breite)
     const maxLeft = window.innerWidth - r.width - padX;
-    neinFixedLeft = clamp(r.left, padX, maxLeft);
-    nein.style.left = neinFixedLeft + "px";
+    const left = clamp(r.left, padX, maxLeft);
+    nein.style.left = left + "px";
 
-    // Y bleibt wo er war
+    // Y bleibt
     nein.style.top = r.top + "px";
   }
 
-  // NUR hoch/runter (extrem)
   function moveNeinVerticalExtreme(){
     const padY = 10;
     const maxY = window.innerHeight - nein.offsetHeight - padY;
@@ -234,16 +240,14 @@
     }, 2000);
   }
 
-  // 5. Klick: Nein -> Ja 💘 groß, aber IN DER BUTTON-ZONE (nicht auf der Frage)
   function turnNeinIntoBigYesInButtonsZone(){
     bigMode = true;
 
-    // Ja soll NICHT bewegen -> Ja bleibt im Layout (wir lassen Spacer + Ja unberührt)
-    // aber Ja darf am Ende nicht mehr klickbar/zu sehen sein:
+    // Ja bleibt stehen (Platz bleibt), aber unsichtbar & nicht klickbar
     yes.style.visibility = "hidden";
     yes.style.pointerEvents = "none";
 
-    // Großes Ja in die Mitte der ButtonsArea setzen (damit Frage frei bleibt)
+    // groß in die Button-Zone (nicht auf die Frage)
     const a = buttonsArea.getBoundingClientRect();
 
     nein.textContent = "Ja 💘";
@@ -259,6 +263,9 @@
   }
 
   function finalYes(){
+    // ✅ FIX 2: floating Nein (und big Ja) wirklich weg
+    nein.style.display = "none";
+
     title.style.display = "none";
     question.style.display = "none";
     buttonsArea.style.display = "none";
@@ -280,6 +287,10 @@
 
     if (clicks <= 3){
       nein.textContent = texts[clicks - 1];
+
+      // nach Textwechsel wird er breiter -> clamp
+      clampNeinXInScreen();
+
       moveNeinVerticalExtreme();
       return;
     }
@@ -287,6 +298,10 @@
     if (clicks === 4 && !memeShown){
       memeShown = true;
       showMeme2s();
+
+      // nach Textwechsel clamp (falls er noch breit ist)
+      clampNeinXInScreen();
+
       moveNeinVerticalExtreme();
       return;
     }
@@ -298,7 +313,6 @@
 
   yes.addEventListener("click", finalYes);
 
-  // Dauer-Konfetti (dicht)
   function startConfettiForeverDense(){
     if (confettiTimer) return;
 
@@ -348,14 +362,9 @@
     }, 240);
   }
 
-  // Bei Resize: Nein bleibt komplett im Screen (nie halb draußen)
+  // Bei Resize: immer wieder clampen
   window.addEventListener("resize", () => {
-    if (!floating || bigMode) return;
-
-    const r = nein.getBoundingClientRect();
-    const maxLeft = window.innerWidth - r.width - padX;
-    neinFixedLeft = clamp(neinFixedLeft ?? r.left, padX, maxLeft);
-    nein.style.left = neinFixedLeft + "px";
+    clampNeinXInScreen();
   });
 </script>
 
